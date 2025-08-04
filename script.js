@@ -12,4 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // Toggle เมนูสำหรับ Hamburger
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const navMenu = document.querySelector('.nav');
+
+    hamburgerMenu.addEventListener('click', () => {
+        navMenu.classList.toggle('is-active');
+    });
+
+    // ปิดเมนูเมื่อคลิกที่ลิงก์ในเมนู
+    document.querySelectorAll('.nav a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('is-active');
+        });
+    });
 });
