@@ -3,341 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - สมัครงาน</title>
+    <title>KSU: Teachable Machine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&display=swap');
-        
         body {
-            font-family: 'Kanit', sans-serif;
+            font-family: 'Sarabun', sans-serif;
+            background-color: #F2F2F2;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
         }
-        
-        .portfolio-btn {
-            transition: all 0.3s ease;
-            transform: translateY(0);
-        }
-        
-        .portfolio-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        
-        .hero-animation {
-            animation: fadeInUp 1s ease-out;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 380px;
             }
         }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        .flow-arrow::after {
+            content: '→';
+            font-size: 2.5rem;
+            color: #F7941D;
+            line-height: 1;
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header Navigation -->
-    <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <div class="text-2xl font-bold text-indigo-600">
-                        My Portfolio
-                    </div>
+<body class="text-[#4A4A4A]">
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center my-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-[#00A6ED]">
+<center><img src="ksu.png" width="20%"/></center><hr color="blue" size="50px"/><br>Teachable Machine</h1>
+            <p class="text-xl md:text-2xl mt-4">AI ที่ทุกคนสร้างได้ โดยไม่ต้องเขียนโค้ด!</p>
+        </header>
+
+        <section id="process" class="my-16">
+            <h2 class="text-3xl font-bold text-center mb-10">3 ขั้นตอนง่ายๆ ในการสร้างโมเดล</h2>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-4 text-center">
+                <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-64">
+                    <div class="text-5xl mb-3">🖥️</div>
+                    <h3 class="text-xl font-bold text-[#00A6ED]">1. รวบรวมข้อมูล<br>(Gather)</h3>
+                    <p class="mt-2 text-sm">ใช้กล้อง, ไมโครโฟน, หรืออัปโหลดไฟล์รูปภาพ, เสียง, และท่าทาง</p>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#home" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">หน้าแรก</a>
-                        <a href="#about" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">เกี่ยวกับฉัน</a>
-                        <a href="#portfolio" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">ผลงาน</a>
-                        <a href="#contact" class="text-gray-700 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">ติดต่อ</a>
-                    </div>
+                <div class="flow-arrow hidden md:block mx-4"></div>
+                <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-64">
+                    <div class="text-5xl mb-3">⚙️</div>
+                    <h3 class="text-xl font-bold text-[#8DC63F]">2. ฝึกฝนโมเดล<br>(Train)</h3>
+                    <p class="mt-2 text-sm">คลิกปุ่มเดียว! ระบบจะเรียนรู้จากข้อมูลของคุณภายในเบราว์เซอร์</p>
                 </div>
-                <div class="md:hidden">
-                    <button class="text-gray-700 hover:text-indigo-600 focus:outline-none">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
+                <div class="flow-arrow hidden md:block mx-4"></div>
+                <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-64">
+                    <div class="text-5xl mb-3">🚀</div>
+                    <h3 class="text-xl font-bold text-[#F7941D]">3. ทดสอบและส่งออก<br>(Test/Export)</h3>
+                    <p class="mt-2 text-sm">ทดสอบโมเดลทันที และนำไปใช้ในโปรเจกต์ของคุณได้เลย</p>
                 </div>
             </div>
-        </div>
-    </nav>
+        </section>
 
-    <!-- Hero Section -->
-    <section id="home" class="gradient-bg min-h-screen flex items-center justify-center pt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="hero-animation">
-                <!-- Profile Image -->
-                <div class="mb-8 floating">
-                    <div class="w-32 h-32 mx-auto bg-white rounded-full shadow-2xl overflow-hidden">
-                        <img src="/images/paitoon.jpg" 
-                             alt="รูปโปรไฟล์ของนายสมชาย" 
-                             class="w-full h-full object-cover"
-                             onerror="this.src='https://via.placeholder.com/150x150/4F46E5/FFFFFF?text=Profile'; this.alt='รูปโปรไฟล์';">
-                    </div>
-                </div>
-                
-                <!-- Introduction -->
-                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
-                    สวัสดีครับ ผม <span class="text-yellow-300">ดร.ไพฑูรย์ ทิพย์สันเทียะ</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-white mb-4 opacity-90">
-                    นักพัฒนาเว็บไซต์ & UX/UI Designer
-                </p>
-                <p class="text-lg text-white mb-12 opacity-80 max-w-3xl mx-auto">
-                    มีประสบการณ์ในการพัฒนาเว็บไซต์และออกแบบ User Experience มากกว่า 3 ปี 
-                    พร้อมที่จะนำความสามารถมาร่วมงานกับบริษัทชั้นนำ
-                </p>
-            </div>
-        </div>
-    </section>
+        <section id="use-cases" class="my-20">
+            <h2 class="text-3xl font-bold text-center mb-12">เราสามารถสร้างอะไรได้บ้าง?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-    <!-- Portfolio Selection Section -->
-    <section id="portfolio" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    เลือกดู Portfolio ตามบริษัทที่สนใจ
-                </h2>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                    ผมได้เตรียม Portfolio เฉพาะสำหรับแต่ละบริษัทที่สนใจสมัครงาน 
-                    เพื่อแสดงให้เห็นถึงความเหมาะสมกับตำแหน่งงาน
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <!-- Google Portfolio Button -->
-                <div class="portfolio-btn bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-8 text-center cursor-pointer shadow-xl">
-                    <div class="mb-6">
-                        <div class="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-lg">
-                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                            </svg>
-                        </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col">
+                    <h3 class="text-2xl font-bold text-center text-[#00A6ED] mb-4">📸 การจำแนกรูปภาพ</h3>
+                    <p class="text-center mb-4">(Image Classify)<br><br>สอน AI ให้เข้าใจภาพต่างๆ แผนภูมินี้แสดงสัดส่วนการใช้งานยอดนิยม</p>
+                    <div class="chart-container flex-grow">
+                        <canvas id="imageChart"></canvas>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Google</h3>
-                    <p class="text-blue-100 mb-6">
-                        Portfolio สำหรับตำแหน่ง Software Engineer 
-                        เน้นการพัฒนา Web Applications
-                    </p>
-                    <button onclick="viewGooglePortfolio()" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors">
-                        ดู Portfolio
-                    </button>
-                </div>
-
-                <!-- Apple Portfolio Button -->
-                <div class="portfolio-btn bg-gradient-to-br from-gray-800 to-black rounded-2xl p-8 text-center cursor-pointer shadow-xl">
-                    <div class="mb-6">
-                        <div class="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-lg">
-                            <svg class="w-8 h-8 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Apple</h3>
-                    <p class="text-gray-300 mb-6">
-                        Portfolio สำหรับตำแหน่ง UX/UI Designer 
-                        เน้นการออกแบบ User Experience
-                    </p>
-                    <button onclick="viewApplePortfolio()" class="bg-white text-gray-800 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">
-                        ดู Portfolio
-                    </button>
-                </div>
-
-                <!-- Microsoft Portfolio Button -->
-                <div class="portfolio-btn bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 text-center cursor-pointer shadow-xl">
-                    <div class="mb-6">
-                        <div class="w-16 h-16 mx-auto bg-white rounded-full flex items-center justify-center shadow-lg">
-                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M0 0h11.377v11.372H0zm12.623 0H24v11.372H12.623zM0 12.623h11.377V24H0zm12.623 0H24V24H12.623"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Microsoft</h3>
-                    <p class="text-blue-100 mb-6">
-                        Portfolio สำหรับตำแหน่ง Full Stack Developer 
-                        เน้นการพัฒนา Enterprise Applications
-                    </p>
-                    <button onclick="viewMicrosoftPortfolio()" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors">
-                        ดู Portfolio
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">เกี่ยวกับฉัน</h2>
-                    <p class="text-lg text-gray-600 mb-6">
-                        ผมเป็นนักพัฒนาเว็บไซต์และ UX/UI Designer ที่มีความหลงใหลในการสร้างสรรค์
-                        ประสบการณ์ดิจิทัลที่น่าประทับใจและใช้งานง่าย
-                    </p>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-indigo-600 rounded-full mr-3"></div>
-                            <span class="text-gray-700">Frontend Development (React, Vue.js, HTML/CSS)</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-indigo-600 rounded-full mr-3"></div>
-                            <span class="text-gray-700">Backend Development (Node.js, Python)</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-indigo-600 rounded-full mr-3"></div>
-                            <span class="text-gray-700">UX/UI Design (Figma, Adobe XD)</span>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-2 h-2 bg-indigo-600 rounded-full mr-3"></div>
-                            <span class="text-gray-700">Database Management (MySQL, MongoDB)</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center">
-                    <div class="bg-white rounded-2xl p-8 shadow-xl">
-                        <div class="grid grid-cols-2 gap-6">
-                            <div>
-                                <div class="text-3xl font-bold text-indigo-600 mb-2">3+</div>
-                                <div class="text-gray-600">ปีประสบการณ์</div>
-                            </div>
-                            <div>
-                                <div class="text-3xl font-bold text-indigo-600 mb-2">50+</div>
-                                <div class="text-gray-600">โปรเจค</div>
-                            </div>
-                            <div>
-                                <div class="text-3xl font-bold text-indigo-600 mb-2">20+</div>
-                                <div class="text-gray-600">ลูกค้าพึงพอใจ</div>
-                            </div>
-                            <div>
-                                <div class="text-3xl font-bold text-indigo-600 mb-2">100%</div>
-                                <div class="text-gray-600">ความมุ่งมั่น</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div class="md:col-span-2">
-                    <h3 class="text-2xl font-bold mb-4">My Portfolio</h3>
-                    <p class="text-gray-400 mb-4">
-                        พร้อมที่จะร่วมงานกับทีมที่ยอดเยี่ยมและสร้างสรรค์สิ่งใหม่ๆ ที่จะเปลี่ยนโลก
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">เมนูหลัก</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors">หน้าแรก</a></li>
-                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">เกี่ยวกับฉัน</a></li>
-                        <li><a href="#portfolio" class="text-gray-400 hover:text-white transition-colors">ผลงาน</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">ติดต่อ</a></li>
+                    <ul class="mt-4 list-disc list-inside">
+                        <li><strong>คัดแยกขยะ:</strong> สอน AI ให้แยกขยะแต่ละประเภท</li>
+                        <li><strong>จดจำใบหน้า:</strong> สร้างระบบจดจำคนในครอบครัว</li>
+                        <li><strong>ควบคุมอุปกรณ์:</strong> ใช้ท่าทางมือเพื่อควบคุมสิ่งต่างๆ</li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">ติดต่อ</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li>📧 somchai@email.com</li>
-                        <li>📱 +66 89 123 4567</li>
-                        <li>📍 กรุงเทพมหานคร</li>
-                        <li>💼 พร้อมทำงาน</li>
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col">
+                    <h3 class="text-2xl font-bold text-center text-[#8DC63F] mb-4">🔊 การจำแนกเสียง</h3>
+                     <p class="text-center mb-4">(Sound Classify)<br><br>สอน AI ให้แยกแยะเสียงต่างๆ แผนภูมินี้เปรียบเทียบความนิยมในแต่ละด้าน</p>
+                    <div class="chart-container flex-grow">
+                        <canvas id="audioChart"></canvas>
+                    </div>
+                    <ul class="mt-4 list-disc list-inside">
+                        <li><strong>คำสั่งเสียง:</strong> สร้าง AI ที่ตอบสนองต่อคำสั่ง "เปิด", "ปิด"</li>
+                        <li><strong>ตรวจจับเสียงสัตว์:</strong> ระบุเสียงสัตว์เลี้ยงของคุณ</li>
+                        <li><strong>สร้างสรรค์ดนตรี:</strong> ใช้เสียงเป็นอินพุตสำหรับงานเพลง</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col md:col-span-2 lg:col-span-1">
+                    <h3 class="text-2xl font-bold text-center text-[#F7941D] mb-4">🚶 การจำแนกท่าทาง</h3>
+                    <p class="text-center mb-4">(Pose Classify)<br><br>สอน AI ให้เข้าใจการเคลื่อนไหว แผนภูมินี้แสดงศักยภาพในด้านต่างๆ</p>
+                    <div class="chart-container flex-grow">
+                        <canvas id="poseChart"></canvas>
+                    </div>
+                     <ul class="mt-4 list-disc list-inside">
+                        <li><strong>ออกกำลังกาย:</strong> ตรวจจับท่าโยคะเพื่อช่วยนับจำนวนครั้ง</li>
+                        <li><strong>เกมอินเทอร์แอคทีฟ:</strong> สร้างเกมที่ควบคุมด้วยท่าทาง</li>
+                        <li><strong>ศิลปะจัดวาง:</strong> สร้างงานศิลปะที่ตอบสนองต่อการเคลื่อนไหว</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 My Portfolio. สงวนลิขสิทธิ์ทุกประการ</p>
-            </div>
-        </div>
-    </footer>
+        </section>
+
+        <footer class="text-center my-12">
+             <p class="text-lg mb-4">Teachable Machine ทำให้ AI เป็นเรื่องใกล้ตัวและสร้างสรรค์ได้ไม่จำกัด!</p>
+            <a href="https://teachablemachine.withgoogle.com/" target="_blank" class="bg-[#00A6ED] text-white font-bold py-3 px-8 rounded-full hover:bg-blue-600 transition-colors text-lg">
+                เริ่มต้นสร้างโมเดลกันเลย!
+            </a>
+<br><br>
+https://teachablemachine.withgoogle.com
+        </footer>
+
+    </main>
 
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        function wrapLabel(label) {
+            const maxLength = 16;
+            if (typeof label !== 'string' || label.length <= maxLength) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxLength) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
                 }
-            });
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines.filter(line => line.length > 0);
+        }
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            return Array.isArray(label) ? label.join(' ') : label;
+        };
+        
+        const sharedChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                           family: "'Sarabun', sans-serif",
+                           size: 14,
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    },
+                    bodyFont: {
+                        family: "'Sarabun', sans-serif",
+                    },
+                    titleFont: {
+                        family: "'Sarabun', sans-serif",
+                    }
+                }
+            }
+        };
+
+        const imageLabels = ['คัดแยกวัตถุ', 'การแพทย์และสุขภาพ', 'โปรเจกต์ศิลปะ', 'การจดจำการแสดงออก'];
+        new Chart(document.getElementById('imageChart'), {
+            type: 'doughnut',
+            data: {
+                labels: imageLabels.map(wrapLabel),
+                datasets: [{
+                    label: 'สัดส่วนการใช้งาน',
+                    data: [40, 25, 20, 15],
+                    backgroundColor: ['#00A6ED', '#8DC63F', '#F7941D', '#A7A9AC'],
+                    borderColor: '#FFFFFF',
+                    borderWidth: 2
+                }]
+            },
+            options: sharedChartOptions
         });
 
-        // Portfolio button functions
-        function viewGooglePortfolio() {
-            alert('กำลังเตรียมหน้า Portfolio สำหรับ Google...\nจะพาคุณไปยังหน้า Portfolio เฉพาะสำหรับตำแหน่ง Software Engineer');
-        }
-
-        function viewApplePortfolio() {
-            alert('กำลังเตรียมหน้า Portfolio สำหรับ Apple...\nจะพาคุณไปยังหน้า Portfolio เฉพาะสำหรับตำแหน่ง UX/UI Designer');
-        }
-
-        function viewMicrosoftPortfolio() {
-            alert('กำลังเตรียมหน้า Portfolio สำหรับ Microsoft...\nจะพาคุณไปยังหน้า Portfolio เฉพาะสำหรับตำแหน่ง Full Stack Developer');
-        }
-
-        // Mobile menu toggle (basic implementation)
-        const mobileMenuButton = document.querySelector('.md\\:hidden button');
-        if (mobileMenuButton) {
-/*             mobileMenuButton.addEventListener('click', function() {
-                alert('Mobile menu - ในการใช้งานจริงจะแสดงเมนูสำหรับมือถือ');
-            }); */
-        }
-
-        // Add scroll effect to header
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                header.classList.add('bg-white/95', 'backdrop-blur-sm');
-            } else {
-                header.classList.remove('bg-white/95', 'backdrop-blur-sm');
-            }
+        const audioLabels = ['คำสั่งเสียงควบคุม', 'การตรวจจับเสียงสิ่งแวดล้อม', 'โปรเจกต์ดนตรี'];
+        new Chart(document.getElementById('audioChart'), {
+            type: 'bar',
+            data: {
+                labels: audioLabels.map(wrapLabel),
+                datasets: [{
+                    label: 'ระดับความนิยม',
+                    data: [85, 70, 55],
+                    backgroundColor: ['#8DC63F', '#00A6ED', '#F7941D'],
+                }]
+            },
+            options: { ...sharedChartOptions, scales: { y: { beginAtZero: true } } }
+        });
+        
+        const poseLabels = ['ฟิตเนสและสุขภาพ', 'เกมอินเทอร์แอคทีฟ', 'การช่วยเหลือผู้พิการ', 'การวิเคราะห์กีฬา', 'ศิลปะและการเต้น'];
+        new Chart(document.getElementById('poseChart'), {
+            type: 'radar',
+            data: {
+                labels: poseLabels.map(wrapLabel),
+                datasets: [{
+                    label: 'ศักยภาพการใช้งาน',
+                    data: [9, 7, 8, 6, 9],
+                    fill: true,
+                    backgroundColor: 'rgba(247, 148, 29, 0.2)',
+                    borderColor: '#F7941D',
+                    pointBackgroundColor: '#F7941D',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#F7941D'
+                }]
+            },
+            options: { ...sharedChartOptions, scales: { r: { suggestedMin: 0, suggestedMax: 10 } } }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'969c9699e70b893a',t:'MTc1NDI5NTEzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
