@@ -3,52 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบคำนวณคาร์บอนเครดิตป่าไม้ (ภาคสนาม)</title>
+    <title>ระบบประเมินมวลชีวภาพและคาร์บอนเครดิตป่าไม้</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #f0fdf4; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f8fafc; }
     </style>
 </head>
 <body class="p-4 md:p-8 flex justify-center min-h-screen">
 
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100 self-start">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 self-start">
         
-        <div class="bg-green-700 text-white p-5 flex items-center shadow-md">
-            <svg class="w-7 h-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            <h1 class="text-xl font-semibold tracking-wide">คำนวณนิเวศวิทยาป่าไม้</h1>
+        <div class="bg-emerald-700 text-white p-5 flex items-center shadow-sm">
+            <svg class="w-7 h-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+            <h1 class="text-xl font-bold tracking-wide">ระบบนิเวศวิทยาป่าไม้</h1>
         </div>
 
         <div id="formSection" class="p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-5 text-center bg-green-50 py-2 rounded-lg text-green-800">📍 บันทึกข้อมูลพรรณไม้ใหม่</h2>
+            <h2 class="text-lg font-bold text-gray-800 mb-5 text-center bg-emerald-50 py-2 rounded-lg text-emerald-800">
+                📍 บันทึกข้อมูลพรรณไม้
+            </h2>
             
             <form id="treeForm" class="space-y-5">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">ประเภทป่า (Forest Type)</label>
-                    <select id="forestType" class="w-full border-2 border-gray-200 rounded-xl p-3 bg-white focus:ring-green-500 focus:border-green-500 outline-none transition text-base">
-                        <option value="deciduous">ป่าเต็งรัง / ป่าเบญจพรรณ</option>
-                        <option value="moist_evergreen">ป่าดิบชื้น</option>
-                        <option value="dry_evergreen">ป่าดิบแล้ง</option>
+                    <select id="forestType" class="w-full border-2 border-gray-200 rounded-xl p-3 bg-white focus:ring-emerald-500 focus:border-emerald-500 outline-none transition text-base" required>
+                        <option value="" disabled selected>-- เลือกประเภทป่า --</option>
+                        <option value="dry_dipterocarp">ป่าเต็งรัง (Ogawa)</option>
+                        <option value="mixed_deciduous">ป่าเบญจพรรณ (Ogawa)</option>
+                        <option value="dry_evergreen">ป่าดิบแล้ง (Tsutsumi)</option>
+                        <option value="moist_evergreen">ป่าดิบชื้น (Ogawa)</option>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">ชนิดพรรณไม้ (Species)</label>
-                    <input type="text" id="species" placeholder="เช่น ไม้สัก, ยางนา" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-green-500 transition text-base" required>
+                    <input type="text" id="species" placeholder="เช่น ไม้สัก, ยางนา" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-emerald-500 transition text-base" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">DBH (cm)</label>
-                        <input type="number" step="0.01" id="dbh" placeholder="ขนาดเส้นผ่านศูนย์กลาง" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-green-500 transition text-base" required>
+                        <input type="number" step="0.01" id="dbh" placeholder="เส้นผ่านศูนย์กลาง" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-emerald-500 transition text-base" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">ความสูง (m)</label>
-                        <input type="number" step="0.01" id="height" placeholder="ความสูงทั้งหมด" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-green-500 transition text-base" required>
+                        <input type="number" step="0.01" id="height" placeholder="ความสูงทั้งหมด" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-emerald-500 transition text-base" required>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 mt-6 text-lg">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 mt-6 text-lg">
                     💾 ประมวลผลข้อมูล
                 </button>
             </form>
@@ -56,30 +60,44 @@
 
         <div id="resultSection" class="p-6 hidden bg-gray-50 border-t border-gray-200 h-full">
             <div class="text-center mb-6">
-                <span class="inline-block bg-green-100 text-green-800 text-sm px-4 py-1.5 rounded-full font-bold mb-3 shadow-sm">✅ คำนวณเสร็จสิ้น</span>
+                <span class="inline-block bg-emerald-100 text-emerald-800 text-sm px-4 py-1.5 rounded-full font-bold mb-3 shadow-sm">✅ คำนวณเสร็จสิ้น</span>
                 <h3 class="font-bold text-2xl text-gray-800 mb-1" id="resSpecies"></h3>
-                <p class="text-sm text-gray-600 bg-white inline-block px-3 py-1 rounded-lg border border-gray-200">DBH: <span id="resDbh" class="font-semibold"></span> cm | H: <span id="resH" class="font-semibold"></span> m</p>
+                <p class="text-sm text-gray-600 bg-white inline-block px-3 py-1 rounded-lg border border-gray-200">
+                    <span id="resForestType" class="font-medium text-emerald-700"></span><br>
+                    DBH: <span id="resDbh" class="font-semibold"></span> cm | H: <span id="resH" class="font-semibold"></span> m
+                </p>
             </div>
 
             <div class="space-y-4">
-                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
-                    <h4 class="font-bold text-green-700 mb-3 text-lg flex items-center">🌿 มวลชีวภาพ (Biomass)</h4>
-                    <div class="flex justify-between items-center text-base mb-2"><span class="text-gray-600">มวลชีวภาพเหนือพื้นดิน:</span> <span class="font-bold text-gray-800 text-lg"><span id="resAgb"></span> kg</span></div>
-                    <div class="flex justify-between items-center text-base"><span class="text-gray-600">มวลชีวภาพใต้พื้นดิน:</span> <span class="font-bold text-gray-800 text-lg"><span id="resBgb"></span> kg</span></div>
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-emerald-500">
+                    <h4 class="font-bold text-emerald-700 mb-3 text-lg flex items-center">🌿 มวลชีวภาพ (Biomass)</h4>
+                    <div class="flex justify-between items-center text-base mb-2">
+                        <span class="text-gray-600">เหนือพื้นดิน (AGB):</span> 
+                        <span class="font-bold text-gray-800 text-lg"><span id="resAgb"></span> kg</span>
+                    </div>
+                    <div class="flex justify-between items-center text-base">
+                        <span class="text-gray-600">ใต้พื้นดิน (BGB):</span> 
+                        <span class="font-bold text-gray-800 text-lg"><span id="resBgb"></span> kg</span>
+                    </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
                     <h4 class="font-bold text-blue-700 mb-3 text-lg flex items-center">☁️ คาร์บอนและการดูดซับ</h4>
-                    <div class="flex justify-between items-center text-base mb-2"><span class="text-gray-600">ปริมาณคาร์บอนที่กักเก็บ:</span> <span class="font-bold text-gray-800 text-lg"><span id="resCarbon"></span> kgC</span></div>
-                    <div class="flex justify-between items-center text-base"><span class="text-gray-600">การดูดซับ CO2:</span> <span class="font-black text-blue-600 text-xl"><span id="resCo2"></span> kgCO2eq</span></div>
+                    <div class="flex justify-between items-center text-base mb-2">
+                        <span class="text-gray-600">การกักเก็บคาร์บอน (C):</span> 
+                        <span class="font-bold text-gray-800 text-lg"><span id="resCarbon"></span> kgC</span>
+                    </div>
+                    <div class="flex justify-between items-center text-base">
+                        <span class="text-gray-600">การดูดซับ CO2:</span> 
+                        <span class="font-black text-blue-600 text-xl"><span id="resCo2"></span> kgCO2eq</span>
+                    </div>
                 </div>
             </div>
 
-            <button type="button" id="btnBack" class="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all mt-8 text-lg">
+            <button type="button" id="btnBack" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all mt-8 text-lg">
                 ➕ บันทึกต้นต่อไป
             </button>
         </div>
-
     </div>
 
     <script>
@@ -93,29 +111,43 @@
             
             const D2H = Math.pow(D, 2) * H;
             let Ws = 0, Wb = 0, Wl = 0;
+            let forestTypeName = "";
 
-            if (type === 'deciduous') {
+            // การคำนวณตามประเภทป่า
+            if (type === 'dry_dipterocarp' || type === 'mixed_deciduous') {
+                // ป่าเต็งรัง & ป่าเบญจพรรณ (Ogawa et al., 1965)
                 Ws = 0.0396 * Math.pow(D2H, 0.933);
                 Wb = 0.00349 * Math.pow(D2H, 1.030);
                 Wl = Math.pow((28.0 / (Ws + Wb) + 0.025), -1);
+                forestTypeName = type === 'dry_dipterocarp' ? "ป่าเต็งรัง" : "ป่าเบญจพรรณ";
+            
             } else if (type === 'moist_evergreen') {
+                // ป่าดิบชื้น (Ogawa et al., 1965)
                 Ws = 0.0396 * Math.pow(D2H, 0.9326);
                 Wb = 0.006003 * Math.pow(D2H, 1.027);
                 Wl = Math.pow((28.0 / (Ws + Wb) + 0.025), -1);
+                forestTypeName = "ป่าดิบชื้น";
+
             } else if (type === 'dry_evergreen') {
+                // ป่าดิบแล้ง (Tsutsumi et al., 1983)
                 Ws = 0.0509 * Math.pow(D2H, 0.919);
                 Wb = 0.00893 * Math.pow(D2H, 0.977);
                 Wl = 0.0140 * Math.pow(D2H, 0.669);
+                forestTypeName = "ป่าดิบแล้ง";
             }
 
+            // คำนวณตัวชี้วัด (ตามมาตรฐานทั่วไป)
             const AGB = Ws + Wb + Wl;
-            const BGB = AGB * 0.24;
+            const BGB = AGB * 0.24; // สัดส่วนราก 24%
             const TotalBiomass = AGB + BGB;
-            const Carbon = TotalBiomass * 0.47;
-            const CO2eq = Carbon * 3.667;
+            const Carbon = TotalBiomass * 0.47; // ปริมาณคาร์บอน 47%
+            const CO2eq = Carbon * 3.667; // หรือ (44/12)
 
-            const formatNum = (num) => num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            // ฟังก์ชันฟอร์แมตตัวเลขให้มีคอมม่าและทศนิยม 2 ตำแหน่ง
+            const formatNum = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
+            // แสดงผลลัพธ์ลงบนหน้าจอ
+            document.getElementById('resForestType').innerText = forestTypeName;
             document.getElementById('resSpecies').innerText = species;
             document.getElementById('resDbh').innerText = formatNum(D);
             document.getElementById('resH').innerText = formatNum(H);
@@ -125,16 +157,19 @@
             document.getElementById('resCarbon').innerText = formatNum(Carbon);
             document.getElementById('resCo2').innerText = formatNum(CO2eq);
 
+            // สลับหน้าจอและเลื่อนขึ้นบนสุด
             document.getElementById('formSection').classList.add('hidden');
             document.getElementById('resultSection').classList.remove('hidden');
             window.scrollTo(0, 0);
         });
 
         document.getElementById('btnBack').addEventListener('click', function() {
+            // เคลียร์ค่าเฉพาะพันธุ์ไม้และขนาด เพื่อให้เลือกประเภทป่าเดิมได้ต่อเนื่อง
             document.getElementById('species').value = '';
             document.getElementById('dbh').value = '';
             document.getElementById('height').value = '';
             
+            // สลับหน้าจอกลับ
             document.getElementById('resultSection').classList.add('hidden');
             document.getElementById('formSection').classList.remove('hidden');
             window.scrollTo(0, 0);
