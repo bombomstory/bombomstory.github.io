@@ -3,226 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KSU: Teachable Machine</title>
+    <title>ระบบคำนวณคาร์บอนเครดิตป่าไม้ (ภาคสนาม)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #F2F2F2;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 320px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 380px;
-            }
-        }
-        .flow-arrow::after {
-            content: '→';
-            font-size: 2.5rem;
-            color: #F7941D;
-            line-height: 1;
-        }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f0fdf4; }
     </style>
 </head>
-<body class="text-[#4A4A4A]">
+<body class="p-4 md:p-8 flex justify-center min-h-screen">
 
-    <main class="container mx-auto p-4 md:p-8">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100 self-start">
+        
+        <div class="bg-green-700 text-white p-5 flex items-center shadow-md">
+            <svg class="w-7 h-7 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            <h1 class="text-xl font-semibold tracking-wide">คำนวณนิเวศวิทยาป่าไม้</h1>
+        </div>
 
-        <header class="text-center my-12">
-            <h1 class="text-4xl md:text-6xl font-bold text-[#00A6ED]">
-<center><img src="ksu.png" width="20%"/></center><hr color="blue" size="50px"/><br>Teachable Machine</h1>
-            <p class="text-xl md:text-2xl mt-4">AI ที่ทุกคนสร้างได้ โดยไม่ต้องเขียนโค้ด!</p>
-        </header>
-
-        <section id="process" class="my-16">
-            <h2 class="text-3xl font-bold text-center mb-10">3 ขั้นตอนง่ายๆ ในการสร้างโมเดล</h2>
-            <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-4 text-center">
-                <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-64">
-                    <div class="text-5xl mb-3">🖥️</div>
-                    <h3 class="text-xl font-bold text-[#00A6ED]">1. รวบรวมข้อมูล<br>(Gather)</h3>
-                    <p class="mt-2 text-sm">ใช้กล้อง, ไมโครโฟน, หรืออัปโหลดไฟล์รูปภาพ, เสียง, และท่าทาง</p>
+        <div id="formSection" class="p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-5 text-center bg-green-50 py-2 rounded-lg text-green-800">📍 บันทึกข้อมูลพรรณไม้ใหม่</h2>
+            
+            <form id="treeForm" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">ประเภทป่า (Forest Type)</label>
+                    <select id="forestType" class="w-full border-2 border-gray-200 rounded-xl p-3 bg-white focus:ring-green-500 focus:border-green-500 outline-none transition text-base">
+                        <option value="deciduous">ป่าเต็งรัง / ป่าเบญจพรรณ</option>
+                        <option value="moist_evergreen">ป่าดิบชื้น</option>
+                        <option value="dry_evergreen">ป่าดิบแล้ง</option>
+                    </select>
                 </div>
-                <div class="flow-arrow hidden md:block mx-4"></div>
-                <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-64">
-                    <div class="text-5xl mb-3">⚙️</div>
-                    <h3 class="text-xl font-bold text-[#8DC63F]">2. ฝึกฝนโมเดล<br>(Train)</h3>
-                    <p class="mt-2 text-sm">คลิกปุ่มเดียว! ระบบจะเรียนรู้จากข้อมูลของคุณภายในเบราว์เซอร์</p>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">ชนิดพรรณไม้ (Species)</label>
+                    <input type="text" id="species" placeholder="เช่น ไม้สัก, ยางนา" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-green-500 transition text-base" required>
                 </div>
-                <div class="flow-arrow hidden md:block mx-4"></div>
-                <div class="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-64">
-                    <div class="text-5xl mb-3">🚀</div>
-                    <h3 class="text-xl font-bold text-[#F7941D]">3. ทดสอบและส่งออก<br>(Test/Export)</h3>
-                    <p class="mt-2 text-sm">ทดสอบโมเดลทันที และนำไปใช้ในโปรเจกต์ของคุณได้เลย</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">DBH (cm)</label>
+                        <input type="number" step="0.01" id="dbh" placeholder="ขนาดเส้นผ่านศูนย์กลาง" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-green-500 transition text-base" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">ความสูง (m)</label>
+                        <input type="number" step="0.01" id="height" placeholder="ความสูงทั้งหมด" class="w-full border-2 border-gray-200 rounded-xl p-3 outline-none focus:border-green-500 transition text-base" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 mt-6 text-lg">
+                    💾 ประมวลผลข้อมูล
+                </button>
+            </form>
+        </div>
+
+        <div id="resultSection" class="p-6 hidden bg-gray-50 border-t border-gray-200 h-full">
+            <div class="text-center mb-6">
+                <span class="inline-block bg-green-100 text-green-800 text-sm px-4 py-1.5 rounded-full font-bold mb-3 shadow-sm">✅ คำนวณเสร็จสิ้น</span>
+                <h3 class="font-bold text-2xl text-gray-800 mb-1" id="resSpecies"></h3>
+                <p class="text-sm text-gray-600 bg-white inline-block px-3 py-1 rounded-lg border border-gray-200">DBH: <span id="resDbh" class="font-semibold"></span> cm | H: <span id="resH" class="font-semibold"></span> m</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
+                    <h4 class="font-bold text-green-700 mb-3 text-lg flex items-center">🌿 มวลชีวภาพ (Biomass)</h4>
+                    <div class="flex justify-between items-center text-base mb-2"><span class="text-gray-600">มวลชีวภาพเหนือพื้นดิน:</span> <span class="font-bold text-gray-800 text-lg"><span id="resAgb"></span> kg</span></div>
+                    <div class="flex justify-between items-center text-base"><span class="text-gray-600">มวลชีวภาพใต้พื้นดิน:</span> <span class="font-bold text-gray-800 text-lg"><span id="resBgb"></span> kg</span></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <h4 class="font-bold text-blue-700 mb-3 text-lg flex items-center">☁️ คาร์บอนและการดูดซับ</h4>
+                    <div class="flex justify-between items-center text-base mb-2"><span class="text-gray-600">ปริมาณคาร์บอนที่กักเก็บ:</span> <span class="font-bold text-gray-800 text-lg"><span id="resCarbon"></span> kgC</span></div>
+                    <div class="flex justify-between items-center text-base"><span class="text-gray-600">การดูดซับ CO2:</span> <span class="font-black text-blue-600 text-xl"><span id="resCo2"></span> kgCO2eq</span></div>
                 </div>
             </div>
-        </section>
 
-        <section id="use-cases" class="my-20">
-            <h2 class="text-3xl font-bold text-center mb-12">เราสามารถสร้างอะไรได้บ้าง?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <button type="button" id="btnBack" class="w-full bg-gray-700 hover:bg-gray-800 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all mt-8 text-lg">
+                ➕ บันทึกต้นต่อไป
+            </button>
+        </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col">
-                    <h3 class="text-2xl font-bold text-center text-[#00A6ED] mb-4">📸 การจำแนกรูปภาพ</h3>
-                    <p class="text-center mb-4">(Image Classify)<br><br>สอน AI ให้เข้าใจภาพต่างๆ แผนภูมินี้แสดงสัดส่วนการใช้งานยอดนิยม</p>
-                    <div class="chart-container flex-grow">
-                        <canvas id="imageChart"></canvas>
-                    </div>
-                    <ul class="mt-4 list-disc list-inside">
-                        <li><strong>คัดแยกขยะ:</strong> สอน AI ให้แยกขยะแต่ละประเภท</li>
-                        <li><strong>จดจำใบหน้า:</strong> สร้างระบบจดจำคนในครอบครัว</li>
-                        <li><strong>ควบคุมอุปกรณ์:</strong> ใช้ท่าทางมือเพื่อควบคุมสิ่งต่างๆ</li>
-                    </ul>
-                </div>
-                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col">
-                    <h3 class="text-2xl font-bold text-center text-[#8DC63F] mb-4">🔊 การจำแนกเสียง</h3>
-                     <p class="text-center mb-4">(Sound Classify)<br><br>สอน AI ให้แยกแยะเสียงต่างๆ แผนภูมินี้เปรียบเทียบความนิยมในแต่ละด้าน</p>
-                    <div class="chart-container flex-grow">
-                        <canvas id="audioChart"></canvas>
-                    </div>
-                    <ul class="mt-4 list-disc list-inside">
-                        <li><strong>คำสั่งเสียง:</strong> สร้าง AI ที่ตอบสนองต่อคำสั่ง "เปิด", "ปิด"</li>
-                        <li><strong>ตรวจจับเสียงสัตว์:</strong> ระบุเสียงสัตว์เลี้ยงของคุณ</li>
-                        <li><strong>สร้างสรรค์ดนตรี:</strong> ใช้เสียงเป็นอินพุตสำหรับงานเพลง</li>
-                    </ul>
-                </div>
-                <div class="bg-white rounded-lg shadow-lg p-6 flex flex-col md:col-span-2 lg:col-span-1">
-                    <h3 class="text-2xl font-bold text-center text-[#F7941D] mb-4">🚶 การจำแนกท่าทาง</h3>
-                    <p class="text-center mb-4">(Pose Classify)<br><br>สอน AI ให้เข้าใจการเคลื่อนไหว แผนภูมินี้แสดงศักยภาพในด้านต่างๆ</p>
-                    <div class="chart-container flex-grow">
-                        <canvas id="poseChart"></canvas>
-                    </div>
-                     <ul class="mt-4 list-disc list-inside">
-                        <li><strong>ออกกำลังกาย:</strong> ตรวจจับท่าโยคะเพื่อช่วยนับจำนวนครั้ง</li>
-                        <li><strong>เกมอินเทอร์แอคทีฟ:</strong> สร้างเกมที่ควบคุมด้วยท่าทาง</li>
-                        <li><strong>ศิลปะจัดวาง:</strong> สร้างงานศิลปะที่ตอบสนองต่อการเคลื่อนไหว</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <footer class="text-center my-12">
-             <p class="text-lg mb-4">Teachable Machine ทำให้ AI เป็นเรื่องใกล้ตัวและสร้างสรรค์ได้ไม่จำกัด!</p>
-            <a href="https://teachablemachine.withgoogle.com/" target="_blank" class="bg-[#00A6ED] text-white font-bold py-3 px-8 rounded-full hover:bg-blue-600 transition-colors text-lg">
-                เริ่มต้นสร้างโมเดลกันเลย!
-            </a>
-<br><br>
-https://teachablemachine.withgoogle.com
-        </footer>
-
-    </main>
+    </div>
 
     <script>
-        function wrapLabel(label) {
-            const maxLength = 16;
-            if (typeof label !== 'string' || label.length <= maxLength) {
-                return label;
-            }
-            const words = label.split(' ');
-            const lines = [];
-            let currentLine = '';
-            for (const word of words) {
-                if ((currentLine + word).length > maxLength) {
-                    lines.push(currentLine.trim());
-                    currentLine = '';
-                }
-                currentLine += word + ' ';
-            }
-            lines.push(currentLine.trim());
-            return lines.filter(line => line.length > 0);
-        }
+        document.getElementById('treeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('forestType').value;
+            const species = document.getElementById('species').value;
+            const D = parseFloat(document.getElementById('dbh').value);
+            const H = parseFloat(document.getElementById('height').value);
+            
+            const D2H = Math.pow(D, 2) * H;
+            let Ws = 0, Wb = 0, Wl = 0;
 
-        const tooltipTitleCallback = (tooltipItems) => {
-            const item = tooltipItems[0];
-            let label = item.chart.data.labels[item.dataIndex];
-            return Array.isArray(label) ? label.join(' ') : label;
-        };
-        
-        const sharedChartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        font: {
-                           family: "'Sarabun', sans-serif",
-                           size: 14,
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: tooltipTitleCallback
-                    },
-                    bodyFont: {
-                        family: "'Sarabun', sans-serif",
-                    },
-                    titleFont: {
-                        family: "'Sarabun', sans-serif",
-                    }
-                }
+            if (type === 'deciduous') {
+                Ws = 0.0396 * Math.pow(D2H, 0.933);
+                Wb = 0.00349 * Math.pow(D2H, 1.030);
+                Wl = Math.pow((28.0 / (Ws + Wb) + 0.025), -1);
+            } else if (type === 'moist_evergreen') {
+                Ws = 0.0396 * Math.pow(D2H, 0.9326);
+                Wb = 0.006003 * Math.pow(D2H, 1.027);
+                Wl = Math.pow((28.0 / (Ws + Wb) + 0.025), -1);
+            } else if (type === 'dry_evergreen') {
+                Ws = 0.0509 * Math.pow(D2H, 0.919);
+                Wb = 0.00893 * Math.pow(D2H, 0.977);
+                Wl = 0.0140 * Math.pow(D2H, 0.669);
             }
-        };
 
-        const imageLabels = ['คัดแยกวัตถุ', 'การแพทย์และสุขภาพ', 'โปรเจกต์ศิลปะ', 'การจดจำการแสดงออก'];
-        new Chart(document.getElementById('imageChart'), {
-            type: 'doughnut',
-            data: {
-                labels: imageLabels.map(wrapLabel),
-                datasets: [{
-                    label: 'สัดส่วนการใช้งาน',
-                    data: [40, 25, 20, 15],
-                    backgroundColor: ['#00A6ED', '#8DC63F', '#F7941D', '#A7A9AC'],
-                    borderColor: '#FFFFFF',
-                    borderWidth: 2
-                }]
-            },
-            options: sharedChartOptions
+            const AGB = Ws + Wb + Wl;
+            const BGB = AGB * 0.24;
+            const TotalBiomass = AGB + BGB;
+            const Carbon = TotalBiomass * 0.47;
+            const CO2eq = Carbon * 3.667;
+
+            const formatNum = (num) => num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            document.getElementById('resSpecies').innerText = species;
+            document.getElementById('resDbh').innerText = formatNum(D);
+            document.getElementById('resH').innerText = formatNum(H);
+            
+            document.getElementById('resAgb').innerText = formatNum(AGB);
+            document.getElementById('resBgb').innerText = formatNum(BGB);
+            document.getElementById('resCarbon').innerText = formatNum(Carbon);
+            document.getElementById('resCo2').innerText = formatNum(CO2eq);
+
+            document.getElementById('formSection').classList.add('hidden');
+            document.getElementById('resultSection').classList.remove('hidden');
+            window.scrollTo(0, 0);
         });
 
-        const audioLabels = ['คำสั่งเสียงควบคุม', 'การตรวจจับเสียงสิ่งแวดล้อม', 'โปรเจกต์ดนตรี'];
-        new Chart(document.getElementById('audioChart'), {
-            type: 'bar',
-            data: {
-                labels: audioLabels.map(wrapLabel),
-                datasets: [{
-                    label: 'ระดับความนิยม',
-                    data: [85, 70, 55],
-                    backgroundColor: ['#8DC63F', '#00A6ED', '#F7941D'],
-                }]
-            },
-            options: { ...sharedChartOptions, scales: { y: { beginAtZero: true } } }
-        });
-        
-        const poseLabels = ['ฟิตเนสและสุขภาพ', 'เกมอินเทอร์แอคทีฟ', 'การช่วยเหลือผู้พิการ', 'การวิเคราะห์กีฬา', 'ศิลปะและการเต้น'];
-        new Chart(document.getElementById('poseChart'), {
-            type: 'radar',
-            data: {
-                labels: poseLabels.map(wrapLabel),
-                datasets: [{
-                    label: 'ศักยภาพการใช้งาน',
-                    data: [9, 7, 8, 6, 9],
-                    fill: true,
-                    backgroundColor: 'rgba(247, 148, 29, 0.2)',
-                    borderColor: '#F7941D',
-                    pointBackgroundColor: '#F7941D',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#F7941D'
-                }]
-            },
-            options: { ...sharedChartOptions, scales: { r: { suggestedMin: 0, suggestedMax: 10 } } }
+        document.getElementById('btnBack').addEventListener('click', function() {
+            document.getElementById('species').value = '';
+            document.getElementById('dbh').value = '';
+            document.getElementById('height').value = '';
+            
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('formSection').classList.remove('hidden');
+            window.scrollTo(0, 0);
         });
     </script>
 </body>
