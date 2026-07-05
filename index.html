@@ -19,7 +19,11 @@
             <h1 class="text-xl font-bold tracking-wide">ระบบนิเวศวิทยาป่าไม้</h1>
         </div>
 
-        <div id="formSection" class="p-6">
+        <div class="pt-6 pb-2 flex justify-center">
+            <img src="images/logo.png" alt="โลโก้คณะวิทยาศาสตร์และเทคโนโลยีสุขภาพ" class="w-32 sm:w-36 md:w-44 h-auto object-contain transition-all duration-300">
+        </div>
+
+        <div id="formSection" class="p-6 pt-2">
             <h2 class="text-lg font-bold text-gray-800 mb-5 text-center bg-emerald-50 py-2 rounded-lg text-emerald-800">
                 📍 บันทึกข้อมูลพรรณไม้
             </h2>
@@ -113,40 +117,33 @@
             let Ws = 0, Wb = 0, Wl = 0;
             let forestTypeName = "";
 
-            // การคำนวณตามประเภทป่า
             if (type === 'dry_dipterocarp' || type === 'mixed_deciduous') {
-                // ป่าเต็งรัง & ป่าเบญจพรรณ (Ogawa et al., 1965)
                 Ws = 0.0396 * Math.pow(D2H, 0.933);
                 Wb = 0.00349 * Math.pow(D2H, 1.030);
                 Wl = Math.pow((28.0 / (Ws + Wb) + 0.025), -1);
                 forestTypeName = type === 'dry_dipterocarp' ? "ป่าเต็งรัง" : "ป่าเบญจพรรณ";
             
             } else if (type === 'moist_evergreen') {
-                // ป่าดิบชื้น (Ogawa et al., 1965)
                 Ws = 0.0396 * Math.pow(D2H, 0.9326);
                 Wb = 0.006003 * Math.pow(D2H, 1.027);
                 Wl = Math.pow((28.0 / (Ws + Wb) + 0.025), -1);
                 forestTypeName = "ป่าดิบชื้น";
 
             } else if (type === 'dry_evergreen') {
-                // ป่าดิบแล้ง (Tsutsumi et al., 1983)
                 Ws = 0.0509 * Math.pow(D2H, 0.919);
                 Wb = 0.00893 * Math.pow(D2H, 0.977);
                 Wl = 0.0140 * Math.pow(D2H, 0.669);
                 forestTypeName = "ป่าดิบแล้ง";
             }
 
-            // คำนวณตัวชี้วัด (ตามมาตรฐานทั่วไป)
             const AGB = Ws + Wb + Wl;
-            const BGB = AGB * 0.24; // สัดส่วนราก 24%
+            const BGB = AGB * 0.24; 
             const TotalBiomass = AGB + BGB;
-            const Carbon = TotalBiomass * 0.47; // ปริมาณคาร์บอน 47%
-            const CO2eq = Carbon * 3.667; // หรือ (44/12)
+            const Carbon = TotalBiomass * 0.47; 
+            const CO2eq = Carbon * 3.667; 
 
-            // ฟังก์ชันฟอร์แมตตัวเลขให้มีคอมม่าและทศนิยม 2 ตำแหน่ง
             const formatNum = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-            // แสดงผลลัพธ์ลงบนหน้าจอ
             document.getElementById('resForestType').innerText = forestTypeName;
             document.getElementById('resSpecies').innerText = species;
             document.getElementById('resDbh').innerText = formatNum(D);
@@ -157,19 +154,16 @@
             document.getElementById('resCarbon').innerText = formatNum(Carbon);
             document.getElementById('resCo2').innerText = formatNum(CO2eq);
 
-            // สลับหน้าจอและเลื่อนขึ้นบนสุด
             document.getElementById('formSection').classList.add('hidden');
             document.getElementById('resultSection').classList.remove('hidden');
             window.scrollTo(0, 0);
         });
 
         document.getElementById('btnBack').addEventListener('click', function() {
-            // เคลียร์ค่าเฉพาะพันธุ์ไม้และขนาด เพื่อให้เลือกประเภทป่าเดิมได้ต่อเนื่อง
             document.getElementById('species').value = '';
             document.getElementById('dbh').value = '';
             document.getElementById('height').value = '';
             
-            // สลับหน้าจอกลับ
             document.getElementById('resultSection').classList.add('hidden');
             document.getElementById('formSection').classList.remove('hidden');
             window.scrollTo(0, 0);
