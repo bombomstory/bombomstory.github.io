@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  a{ color:#FF9E1B; text-decoration:none; } a:hover{ color:#FFC24D; }
+  @keyframes bulbGlow{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.14); } }
+  @keyframes pulseDot{ 0%{ box-shadow:0 0 0 0 rgba(96,224,160,.55);} 70%{ box-shadow:0 0 0 7px rgba(96,224,160,0);} 100%{ box-shadow:0 0 0 0 rgba(96,224,160,0);} }
+  [data-sh-theme]{
+    --appbg: radial-gradient(1200px 800px at 50% -10%, #241d15 0%, #1a150f 45%, #120e08 100%);
+    --ink:#F3ECE0; --ink2:rgba(243,236,224,.6); --ink3:rgba(243,236,224,.42); --ink4:rgba(243,236,224,.26);
+    --card:rgba(255,255,255,.045); --brd:rgba(255,255,255,.07);
+    --fill:rgba(255,255,255,.06); --fill-strong:rgba(255,255,255,.13);
+    --time:#FFEBC4; --ok:#8DF0BE; --ok-bg:rgba(96,224,160,.1); --ok-brd:rgba(96,224,160,.28);
+  }
+  [data-sh-theme="light"]{
+    --appbg: radial-gradient(1200px 800px at 50% -8%, #FFFDF8 0%, #FBF3E6 46%, #F1E4D0 100%);
+    --ink:#2A1E12; --ink2:rgba(42,30,18,.66); --ink3:rgba(42,30,18,.5); --ink4:rgba(42,30,18,.34);
+    --card:#FFFFFF; --brd:rgba(42,30,18,.1);
+    --fill:rgba(42,30,18,.06); --fill-strong:rgba(42,30,18,.14);
+    --time:#C9740A; --ok:#0E7A4A; --ok-bg:rgba(20,150,95,.12); --ok-brd:rgba(20,150,95,.3);
+  }
+  #sh-app{ display:flex; flex-direction:column; gap:14px; width:100%; max-width:1200px; margin:0 auto; }
+  [data-role="devices-grid"]{ display:grid; grid-template-columns:1fr; gap:10px; }
+  @media (min-width:560px){ [data-role="devices-grid"]{ grid-template-columns:1fr 1fr; } }
+  @media (min-width:768px){
+    #sh-app{ display:grid; gap:18px;
+      grid-template-columns:1fr 1fr;
+      grid-template-areas:"head head" "house house" "master master" "devices devices" "energy schedule" "log log"; }
+    [data-role="head"]{ grid-area:head; } [data-role="house"]{ grid-area:house; }
+    [data-role="master"]{ grid-area:master; } [data-role="devices"]{ grid-area:devices; }
+    [data-role="energy"]{ grid-area:energy; } [data-role="schedule"]{ grid-area:schedule; }
+    [data-role="log"]{ grid-area:log; }
+    [data-role="devices-grid"]{ grid-template-columns:1fr 1fr; }
+  }
+  @media (min-width:1040px){
+    #sh-app{ align-items:start;
+      grid-template-columns:minmax(400px, 0.95fr) 1.15fr;
+      grid-template-areas:"head head" "house devices" "house energy" "master schedule" "log log"; }
+    [data-role="devices-grid"]{ grid-template-columns:1fr 1fr; }
+    #sh-title{ font-size:34px; }
+  }
+</style>
+</helmet>
+<div data-sh-theme="{{ themeName }}" style="min-height:100vh; width:100%; padding:18px; background:var(--appbg, radial-gradient(1200px 800px at 50% -10%, #241d15 0%, #1a150f 45%, #120e08 100%)); font-family:'IBM Plex Sans Thai', system-ui, sans-serif; color:var(--ink, #F3ECE0); transition:background .4s ease, color .4s ease;">
+
+  <!-- toast -->
+  <div style="{{ toastStyle }}">
+    <div style="width:30px; height:30px; border-radius:50%; background:radial-gradient(circle at 40% 35%, #8DF0BE, #35C67E); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      <svg width="15" height="15" viewBox="0 0 15 15"><path d="M3 8l3 3 6-7" fill="none" stroke="#0c3a24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </div>
+    <div style="min-width:0;">
+      <div style="font-size:14px; font-weight:600; color:var(--ink);">{{ toastText }}</div>
+      <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink3); margin-top:1px;">{{ toastSub }}</div>
+    </div>
+  </div>
+
+  <div id="sh-app">
+
+    <!-- HEADER -->
+    <div data-role="head" style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:6px 2px 2px;">
+      <div>
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2px; color:var(--ink3); text-transform:uppercase;">My Home · Smart Lighting</div>
+        <div id="sh-title" style="font-size:27px; font-weight:700; line-height:1.15; margin-top:3px;">บ้านสุขใจ</div>
+      </div>
+      <div style="display:flex; align-items:flex-start; gap:10px;">
+        <div onClick="{{ onToggleTheme }}" title="สลับโทนสว่าง / มืด" style="{{ themeBtn }}" style-active="{{ pressStyle }}">
+          <svg style="{{ sunShow }}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+          <svg style="{{ moonShow }}" width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+          <div style="display:flex; align-items:center; gap:7px; padding:6px 11px; border-radius:999px; background:var(--ok-bg); border:1px solid var(--ok-brd);">
+            <div style="width:7px; height:7px; border-radius:50%; background:#3EC983; animation:pulseDot 2.2s ease-out infinite;"></div>
+            <span style="font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:600; color:var(--ok);">ESP8266 · Online</span>
+          </div>
+          <span style="font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--ink4);">192.168.1.42 · RSSI −54dBm</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOUSE CROSS-SECTION -->
+    <div data-role="house">
+      <div style="position:relative; height:64px; overflow:hidden;">
+        <div style="position:absolute; left:50%; top:0; transform:translateX(-50%); width:104%; height:64px; clip-path:polygon(50% 0, 100% 100%, 0 100%); background:linear-gradient(#3b332a, #2b241d); box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);"></div>
+        <div style="position:absolute; top:2px; right:28%; width:16px; height:26px; background:#332c24; border-radius:3px 3px 0 0;"></div>
+      </div>
+      <div style="position:relative; background:#231c15; border-radius:0 0 16px 16px; padding:3px; box-shadow:0 24px 50px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,200,120,.06);">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px;">
+
+          <!-- LIVING -->
+          <div style="position:relative; height:124px; background:#1a140e; overflow:hidden; border-radius:12px 0 0 0;">
+            <div style="position:absolute; bottom:12px; left:16px; width:64px; height:18px; background:#6a5843; border-radius:5px;"></div>
+            <div style="position:absolute; bottom:26px; left:16px; width:64px; height:13px; background:#7a664e; border-radius:6px 6px 0 0;"></div>
+            <div style="position:absolute; bottom:2px; left:0; right:0; height:5px; background:rgba(0,0,0,.35);"></div>
+            <div style="{{ ui.living.glow }}"></div>
+            <div style="position:absolute; top:0; left:50%; width:2px; height:22px; background:#2b241c; transform:translateX(-50%);"></div>
+            <div style="{{ ui.living.bulb }}"></div>
+            <div style="position:absolute; bottom:8px; left:12px; font-family:'IBM Plex Mono', monospace; font-size:9px; color:rgba(243,236,224,.5); letter-spacing:.5px;">D1</div>
+            <div style="position:absolute; top:8px; right:10px; font-size:11px; font-weight:600; color:rgba(243,236,224,.7);">ห้องนั่งเล่น</div>
+          </div>
+
+          <!-- BEDROOM -->
+          <div style="position:relative; height:124px; background:#1a140e; overflow:hidden; border-radius:0 12px 0 0;">
+            <div style="position:absolute; bottom:12px; right:14px; width:72px; height:16px; background:#6a5843; border-radius:4px;"></div>
+            <div style="position:absolute; bottom:12px; right:14px; width:44px; height:16px; background:#8a6f52; border-radius:4px;"></div>
+            <div style="position:absolute; bottom:20px; right:60px; width:20px; height:12px; background:#cdbA96; border-radius:3px;"></div>
+            <div style="position:absolute; bottom:2px; left:0; right:0; height:5px; background:rgba(0,0,0,.35);"></div>
+            <div style="{{ ui.bedroom.glow }}"></div>
+            <div style="position:absolute; top:0; left:50%; width:2px; height:22px; background:#2b241c; transform:translateX(-50%);"></div>
+            <div style="{{ ui.bedroom.bulb }}"></div>
+            <div style="position:absolute; bottom:8px; right:12px; font-family:'IBM Plex Mono', monospace; font-size:9px; color:rgba(243,236,224,.5); letter-spacing:.5px;">D5</div>
+            <div style="position:absolute; top:8px; left:10px; font-size:11px; font-weight:600; color:rgba(243,236,224,.7);">ห้องนอน</div>
+          </div>
+
+          <!-- KITCHEN -->
+          <div style="position:relative; height:124px; background:#1a140e; overflow:hidden; border-radius:0 0 0 12px;">
+            <div style="position:absolute; bottom:12px; left:12px; width:82px; height:16px; background:#6a5843; border-radius:4px;"></div>
+            <div style="position:absolute; top:34px; left:12px; width:42px; height:15px; background:#5a4c3a; border-radius:3px;"></div>
+            <div style="position:absolute; top:34px; left:60px; width:26px; height:15px; background:#5a4c3a; border-radius:3px;"></div>
+            <div style="position:absolute; bottom:2px; left:0; right:0; height:5px; background:rgba(0,0,0,.35);"></div>
+            <div style="{{ ui.kitchen.glow }}"></div>
+            <div style="position:absolute; top:0; left:50%; width:2px; height:22px; background:#2b241c; transform:translateX(-50%);"></div>
+            <div style="{{ ui.kitchen.bulb }}"></div>
+            <div style="position:absolute; bottom:8px; left:12px; font-family:'IBM Plex Mono', monospace; font-size:9px; color:rgba(243,236,224,.5); letter-spacing:.5px;">D2</div>
+            <div style="position:absolute; top:8px; right:10px; font-size:11px; font-weight:600; color:rgba(243,236,224,.7);">ครัว</div>
+          </div>
+
+          <!-- PORCH -->
+          <div style="position:relative; height:124px; background:#1a140e; overflow:hidden; border-radius:0 0 12px 0;">
+            <div style="position:absolute; bottom:12px; left:50%; transform:translateX(-50%); width:32px; height:44px; background:#5a4c3a; border-radius:5px 5px 0 0;"></div>
+            <div style="position:absolute; bottom:32px; left:calc(50% + 8px); width:5px; height:5px; border-radius:50%; background:#c9b58f;"></div>
+            <div style="position:absolute; bottom:12px; right:14px; width:12px; height:20px; background:#4a5c3a; border-radius:3px 3px 0 0;"></div>
+            <div style="position:absolute; bottom:2px; left:0; right:0; height:5px; background:rgba(0,0,0,.35);"></div>
+            <div style="{{ ui.porch.glow }}"></div>
+            <div style="position:absolute; top:0; left:50%; width:2px; height:22px; background:#2b241c; transform:translateX(-50%);"></div>
+            <div style="{{ ui.porch.bulb }}"></div>
+            <div style="position:absolute; bottom:8px; right:12px; font-family:'IBM Plex Mono', monospace; font-size:9px; color:rgba(243,236,224,.5); letter-spacing:.5px;">D6</div>
+            <div style="position:absolute; top:8px; left:10px; font-size:11px; font-weight:600; color:rgba(243,236,224,.7);">หน้าบ้าน</div>
+          </div>
+
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; padding:8px 0 5px;">
+          <div style="width:8px; height:8px; border-radius:2px; background:#5FE0A0; box-shadow:0 0 8px #5FE0A0;"></div>
+          <span style="font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1px; color:rgba(243,236,224,.4);">ESP8266 (12E) · GPIO BRIDGE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MASTER SWITCH -->
+    <div data-role="master" onClick="{{ onMaster }}" style="display:flex; align-items:center; gap:14px; padding:16px; border-radius:20px; background:linear-gradient(135deg, rgba(255,158,27,.14), rgba(255,158,27,.04)); border:1px solid rgba(255,180,90,.22); cursor:pointer;" style-active="{{ pressStyle }}">
+      <div style="{{ masterTile }}">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2v9" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"></path><path d="M5.5 5.5a7.5 7.5 0 1 0 11 0" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"></path></svg>
+      </div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:16px; font-weight:700;">ควบคุมทั้งหมด</div>
+        <div style="font-size:12px; color:var(--ink2); margin-top:1px;">{{ masterStateTh }} · Master switch</div>
+      </div>
+      <div style="{{ masterTrack }}">
+        <div style="{{ masterKnob }}"></div>
+      </div>
+    </div>
+
+    <!-- DEVICES -->
+    <div data-role="devices">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; padding:0 2px;">
+        <div style="font-size:14px; font-weight:700; letter-spacing:.3px;">อุปกรณ์ในบ้าน</div>
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink3);">Devices · 4</div>
+      </div>
+      <div data-role="devices-grid">
+        <sc-for list="{{ roomList }}" as="item" hint-placeholder-count="4">
+          <div onClick="{{ item.onToggle }}" style="display:flex; align-items:center; gap:13px; padding:13px 14px; border-radius:18px; background:var(--card); border:1px solid var(--brd); cursor:pointer;">
+            <div style="{{ item.tile }}">
+              <div style="position:relative; width:15px; height:15px; border-radius:50% 50% 45% 45%; background:currentColor;"></div>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:15px; font-weight:600;">{{ item.th }}</div>
+              <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink3); margin-top:2px;">{{ item.en }} · GPIO {{ item.pin }} · {{ item.statusTh }}</div>
+            </div>
+            <div style="{{ item.track }}">
+              <div style="{{ item.knob }}"></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ENERGY -->
+    <div data-role="energy" style="padding:16px; border-radius:20px; background:var(--card); border:1px solid var(--brd);">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:700;">การใช้พลังงาน</div>
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink3);">Energy · live</div>
+      </div>
+      <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:12px;">
+        <span style="font-family:'IBM Plex Mono', monospace; font-size:36px; font-weight:600; color:#E8850E; line-height:1;">{{ energyNow }}</span>
+        <span style="font-family:'IBM Plex Mono', monospace; font-size:15px; color:var(--ink3);">W / {{ energyMax }} W</span>
+      </div>
+      <div style="height:8px; border-radius:5px; background:var(--fill); overflow:hidden;">
+        <div style="{{ energyBar }}"></div>
+      </div>
+      <div style="font-size:12px; color:var(--ink2); margin-top:9px;">{{ activeCount }} จุดกำลังเปิดใช้งาน · ประหยัดเมื่อปิดที่ไม่ใช้</div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div data-role="schedule" style="padding:16px; border-radius:20px; background:var(--card); border:1px solid var(--brd);">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
+        <div style="font-size:14px; font-weight:700;">ตั้งเวลา</div>
+        <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink3);">Schedule</div>
+      </div>
+      <sc-for list="{{ schedules }}" as="sc" hint-placeholder-count="2">
+        <div style="display:flex; align-items:center; gap:12px; padding:8px 0;">
+          <div style="font-family:'IBM Plex Mono', monospace; font-size:20px; font-weight:500; color:var(--time); width:58px;">{{ sc.time }}</div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:14px; font-weight:500;">{{ sc.th }}</div>
+            <div style="font-size:11px; color:var(--ink3); margin-top:1px;">{{ sc.en }}</div>
+          </div>
+          <div onClick="{{ sc.onToggle }}" style="{{ sc.track }}">
+            <div style="{{ sc.knob }}"></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- COMMAND LOG -->
+    <div data-role="log" style="border-radius:20px; background:#100c07; border:1px solid rgba(255,255,255,.06); overflow:hidden;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:1px solid rgba(255,255,255,.06);">
+        <div style="font-size:14px; font-weight:700; color:#F3ECE0;">คำสั่งที่ส่งไปบอร์ด</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div style="width:6px; height:6px; border-radius:50%; background:#5FE0A0;"></div>
+          <span style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:rgba(243,236,224,.4);">/gpio · TX</span>
+        </div>
+      </div>
+      <div style="padding:8px 14px 14px;">
+        <sc-for list="{{ logs }}" as="lg" hint-placeholder-count="3">
+          <div style="display:flex; align-items:center; gap:9px; padding:5px 0; font-family:'IBM Plex Mono', monospace; font-size:11.5px; border-bottom:1px solid rgba(255,255,255,.04);">
+            <span style="color:rgba(243,236,224,.35); flex-shrink:0;">{{ lg.time }}</span>
+            <span style="{{ lg.methodStyle }}">{{ lg.method }}</span>
+            <span style="color:rgba(243,236,224,.6); flex-shrink:0;">{{ lg.path }}</span>
+            <span style="{{ lg.bodyStyle }}">{{ lg.body }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center; font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--ink4); margin-top:20px; letter-spacing:1px;">HOME IoT CONTROLLER · v1.0 · ESP8266 (12E)</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.ROOMS = [
+      { key:'living',  th:'ห้องนั่งเล่น', en:'Living room',  pin:'D1', watt:9  },
+      { key:'bedroom', th:'ห้องนอน',      en:'Bedroom',      pin:'D5', watt:12 },
+      { key:'kitchen', th:'ครัว',         en:'Kitchen',      pin:'D2', watt:15 },
+      { key:'porch',   th:'หน้าบ้าน',     en:'Front porch',  pin:'D6', watt:7  },
+    ];
+    this.state = {
+      rooms: { living:true, bedroom:false, kitchen:true, porch:false },
+      sched: [true, true],
+      theme: 'dark',
+      logs: [],
+      toastShow:false, toast:{ text:'', sub:'' },
+    };
+  }
+
+  componentDidMount(){
+    try{
+      const s = JSON.parse(localStorage.getItem('iot-home-v1'));
+      if(s && s.rooms){ this.setState({ rooms:s.rooms, sched:s.sched || this.state.sched, theme: s.theme || 'dark' }); }
+    }catch(e){}
+    this.setState(st => ({ logs: st.logs.length ? st.logs : [
+      { id:1, time:this.now(-4), method:'GET', path:'/status', body:'{ device:"esp8266", ok:true }', kind:'in' },
+    ]}));
+  }
+
+  now(offsetSec){
+    const d = new Date(Date.now() + (offsetSec||0)*1000);
+    return d.toTimeString().slice(0,8);
+  }
+  save(rooms, sched, theme){ try{ localStorage.setItem('iot-home-v1', JSON.stringify({ rooms, sched, theme: theme || this.state.theme })); }catch(e){} }
+
+  toggleTheme(){
+    const theme = this.state.theme === 'dark' ? 'light' : 'dark';
+    this.setState({ theme });
+    this.save(this.state.rooms, this.state.sched, theme);
+    this.playClick(theme === 'light');
+  }
+
+  playClick(on){
+    try{
+      const A = this._ac || (this._ac = new (window.AudioContext||window.webkitAudioContext)());
+      if(A.state==='suspended') A.resume();
+      const o = A.createOscillator(), g = A.createGain();
+      o.type = 'sine'; o.frequency.value = on ? 740 : 360;
+      o.connect(g); g.connect(A.destination);
+      const t = A.currentTime;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.08, t+0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t+0.16);
+      o.start(t); o.stop(t+0.18);
+    }catch(e){}
+  }
+
+  pushLog(entry){
+    this.setState(st => ({ logs: [{ id: Date.now()+Math.random(), ...entry }, ...st.logs].slice(0,7) }));
+  }
+  showToast(text, sub){
+    clearTimeout(this._tt);
+    this.setState({ toastShow:true, toast:{ text, sub } });
+    this._tt = setTimeout(() => this.setState({ toastShow:false }), 2100);
+  }
+
+  toggleRoom(key){
+    const meta = this.ROOMS.find(r => r.key===key);
+    const on = !this.state.rooms[key];
+    const rooms = { ...this.state.rooms, [key]:on };
+    this.setState({ rooms });
+    this.save(rooms, this.state.sched);
+    this.playClick(on);
+    this.pushLog({ time:this.now(), method:'POST', path:'/gpio/write', body:`{ pin:"${meta.pin}", val:${on?1:0} }`, kind: on?'on':'off' });
+    this.showToast(`${on?'เปิด':'ปิด'}ไฟ${meta.th}`, `GPIO ${meta.pin} · ${on?'HIGH':'LOW'} · ส่งคำสั่งสำเร็จ`);
+  }
+  setAll(on){
+    const rooms = {};
+    this.ROOMS.forEach(r => rooms[r.key] = on);
+    this.setState({ rooms });
+    this.save(rooms, this.state.sched);
+    this.playClick(on);
+    this.pushLog({ time:this.now(), method:'POST', path:'/gpio/all', body:`{ val:${on?1:0}, pins:4 }`, kind: on?'on':'off' });
+    this.showToast(on ? 'เปิดไฟทั้งบ้าน' : 'ปิดไฟทั้งบ้าน', `4 อุปกรณ์ · ${on?'HIGH':'LOW'} · ส่งคำสั่งสำเร็จ`);
+  }
+  toggleMaster(){
+    const anyOff = this.ROOMS.some(r => !this.state.rooms[r.key]);
+    this.setAll(anyOff);
+  }
+  toggleSched(i){
+    const sched = this.state.sched.slice();
+    sched[i] = !sched[i];
+    this.setState({ sched });
+    this.save(this.state.rooms, sched);
+    this.playClick(sched[i]);
+  }
+
+  renderVals(){
+    const R = this.state.rooms;
+
+    const glow = on => ({
+      position:'absolute', inset:0, pointerEvents:'none',
+      background: on
+        ? 'radial-gradient(130% 88% at 50% -8%, rgba(255,201,104,.36) 0%, rgba(255,168,64,.13) 44%, rgba(255,150,40,0) 74%)'
+        : 'radial-gradient(130% 88% at 50% -8%, rgba(120,150,190,.06) 0%, rgba(120,150,190,0) 60%)',
+    });
+    const bulb = on => ({
+      position:'absolute', top:'20px', left:'50%', width:'22px', height:'22px', borderRadius:'50%',
+      transform:'translateX(-50%)',
+      background: on
+        ? 'radial-gradient(circle at 50% 34%, #FFF6DC 0%, #FFCF6A 46%, #FF9E1B 100%)'
+        : 'linear-gradient(#4a4235, #322b22)',
+      boxShadow: on
+        ? '0 0 15px 5px rgba(255,182,72,.85), 0 0 46px 16px rgba(255,150,40,.34)'
+        : 'inset 0 -2px 4px rgba(0,0,0,.45)',
+      animation: on ? 'bulbGlow 3s ease-in-out infinite' : 'none',
+    });
+    const track = (on, big) => ({
+      position:'relative', width: big?'56px':'46px', height: big?'32px':'27px',
+      borderRadius: big?'16px':'14px', flexShrink:0, cursor:'pointer', transition:'background .25s ease',
+      background: on ? 'linear-gradient(90deg, #FF9E1B, #FFC24D)' : 'var(--fill-strong)',
+      boxShadow: on ? '0 0 12px rgba(255,158,27,.4)' : 'none',
+    });
+    const knob = (on, big) => {
+      const sz = big ? 26 : 21, dx = big ? 24 : 19;
+      return {
+        position:'absolute', top:'3px', left:'3px', width:sz+'px', height:sz+'px', borderRadius:'50%',
+        background:'#fff', boxShadow:'0 2px 4px rgba(0,0,0,.3)',
+        transition:'transform .25s cubic-bezier(.34,1.56,.64,1)',
+        transform: on ? `translateX(${dx}px)` : 'translateX(0px)',
+      };
+    };
+    const tile = (on, big) => ({
+      width: big?'46px':'42px', height: big?'46px':'42px', borderRadius:big?'14px':'12px',
+      display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, transition:'all .3s ease',
+      background: on ? 'radial-gradient(circle at 50% 32%, #FFE9B6, #FFB347)' : 'var(--fill)',
+      boxShadow: on ? '0 0 16px rgba(255,175,70,.55)' : 'none',
+      color: on ? '#5a3d0a' : 'var(--ink4)',
+    });
+
+    const ui = {};
+    this.ROOMS.forEach(r => { ui[r.key] = { glow: glow(R[r.key]), bulb: bulb(R[r.key]) }; });
+
+    const roomList = this.ROOMS.map(r => ({
+      key:r.key, th:r.th, en:r.en, pin:r.pin,
+      statusTh: R[r.key] ? 'เปิดอยู่' : 'ปิดอยู่',
+      tile: tile(R[r.key]), track: track(R[r.key]), knob: knob(R[r.key]),
+      onToggle: () => this.toggleRoom(r.key),
+    }));
+
+    const active = this.ROOMS.filter(r => R[r.key]);
+    const activeCount = active.length;
+    const energyNow = active.reduce((a,r) => a + r.watt, 0);
+    const energyMax = this.ROOMS.reduce((a,r) => a + r.watt, 0);
+    const masterOn = activeCount === this.ROOMS.length;
+    const masterStateTh = activeCount===0 ? 'ปิดทั้งหมด' : masterOn ? 'เปิดทั้งหมด' : `เปิดอยู่ ${activeCount} จุด`;
+
+    const schedMeta = [
+      { time:'18:30', th:'เปิดไฟหน้าบ้านอัตโนมัติ', en:'Auto porch light on' },
+      { time:'23:00', th:'ปิดไฟทั้งหมดก่อนนอน', en:'All lights off' },
+    ];
+    const schedules = schedMeta.map((s,i) => ({
+      time:s.time, th:s.th, en:s.en,
+      track: track(this.state.sched[i]), knob: knob(this.state.sched[i]),
+      onToggle: () => this.toggleSched(i),
+    }));
+
+    const chipBase = { flexShrink:0, padding:'1px 6px', borderRadius:'5px', fontSize:'10px', fontWeight:600 };
+    const methodColors = {
+      POST: { ...chipBase, background:'rgba(255,158,27,.18)', color:'#FFC24D' },
+      GET:  { ...chipBase, background:'rgba(96,224,160,.16)', color:'#8DF0BE' },
+    };
+    const bodyColor = { on:'#FFC24D', off:'rgba(160,178,205,.85)', in:'#8DF0BE' };
+    const bodyBase = { minWidth:0, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' };
+    const logs = this.state.logs.map(l => ({
+      time:l.time, method:l.method, path:l.path, body:l.body,
+      methodStyle: methodColors[l.method] || methodColors.POST,
+      bodyStyle: { ...bodyBase, color: bodyColor[l.kind] || 'rgba(243,236,224,.7)' },
+    }));
+
+    const isDark = this.state.theme === 'dark';
+    const themeBtn = {
+      width:'38px', height:'38px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center',
+      flexShrink:0, cursor:'pointer', color:'var(--ink2)', background:'var(--card)', border:'1px solid var(--brd)',
+      transition:'all .25s ease',
+    };
+
+    const toastBase = {
+      position:'fixed', top:'16px', left:'50%', transform:'translateX(-50%)', zIndex:80,
+      width:'calc(100% - 32px)', maxWidth:'420px',
+      display:'flex', alignItems:'center', gap:'12px', padding:'12px 14px', borderRadius:'16px',
+      background: isDark ? 'rgba(30,25,19,.92)' : 'rgba(255,252,246,.94)',
+      backdropFilter:'blur(14px)', WebkitBackdropFilter:'blur(14px)',
+      border:'1px solid var(--ok-brd)', boxShadow:'0 12px 34px rgba(0,0,0,.28)',
+      transition:'opacity .28s ease, transform .28s ease',
+    };
+
+    return {
+      ui, roomList, schedules, logs,
+      themeName: this.state.theme, isDark,
+      onToggleTheme: () => this.toggleTheme(),
+      themeBtn,
+      sunShow: { display: isDark ? 'none' : 'block' },
+      moonShow: { display: isDark ? 'block' : 'none' },
+      onMaster: () => this.toggleMaster(),
+      masterTile: tile(activeCount>0, true),
+      masterTrack: track(masterOn, true),
+      masterKnob: knob(masterOn, true),
+      masterStateTh,
+      energyNow, energyMax, activeCount,
+      energyBar: { height:'100%', borderRadius:'5px', background:'linear-gradient(90deg, #FF9E1B, #FFD37A)', transition:'width .4s ease', width:`${(energyMax ? energyNow/energyMax*100 : 0).toFixed(0)}%` },
+      pressStyle: { transform:'scale(.97)' },
+      toastText: this.state.toast.text,
+      toastSub: this.state.toast.sub,
+      toastStyle: this.state.toastShow ? { ...toastBase, opacity:1 } : { ...toastBase, opacity:0, transform:'translateX(-50%) translateY(-14px)', pointerEvents:'none' },
+    };
+  }
+}
+</script>
+</body>
+</html>
