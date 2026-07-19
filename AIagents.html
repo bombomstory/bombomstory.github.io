@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Delegation Dashboard | กระดานสั่งงาน AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0f172a; /* Slate 900 for dark mode tech vibe */
+            color: #f8fafc;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7); /* Slate 800 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .prompt-box {
+            background-color: #0b1120;
+            border-left: 4px solid #3b82f6; /* Blue 500 */
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #10b981; /* Emerald 500 */
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .toast.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;} 
+            to {bottom: 0; opacity: 0;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <main class="max-w-7xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-700 pb-6">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                    🤖 AI Delegation Dashboard
+                </h1>
+                <p class="text-slate-400 mt-2 text-sm md:text-base">ระบบจัดการและคลังคำสั่ง (Prompts) สำหรับมอบหมายงานให้ AI Agent</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <p class="text-sm text-slate-400">สถานะระบบ</p>
+                    <p class="text-sm font-semibold text-emerald-400 flex items-center justify-end">
+                        <span class="relative flex h-3 w-3 mr-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        พร้อมสั่งงาน
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-card p-6 flex items-center border-t-4 border-blue-500">
+                <div class="p-3 bg-blue-500/20 rounded-lg text-blue-400 text-2xl">⚡</div>
+                <div class="ml-4">
+                    <p class="text-slate-400 text-sm">เวลาที่ประหยัดได้ (โดยประมาณ)</p>
+                    <h3 class="text-2xl font-bold text-white">~15 <span class="text-lg text-slate-500 font-normal">ชม./สัปดาห์</span></h3>
+                </div>
+            </div>
+            <div class="glass-card p-6 flex items-center border-t-4 border-rose-500">
+                <div class="p-3 bg-rose-500/20 rounded-lg text-rose-400 text-2xl">🔥</div>
+                <div class="ml-4">
+                    <p class="text-slate-400 text-sm">คิวงานด่วน (วันนี้)</p>
+                    <h3 class="text-2xl font-bold text-white">2 <span class="text-lg text-slate-500 font-normal">รายการ</span></h3>
+                </div>
+            </div>
+            <div class="glass-card p-6 flex items-center border-t-4 border-amber-500">
+                <div class="p-3 bg-amber-500/20 rounded-lg text-amber-400 text-2xl">📅</div>
+                <div class="ml-4">
+                    <p class="text-slate-400 text-sm">คิวงานระยะสั้น (สัปดาห์นี้)</p>
+                    <h3 class="text-2xl font-bold text-white">3 <span class="text-lg text-slate-500 font-normal">รายการ</span></h3>
+                </div>
+            </div>
+            <div class="glass-card p-6 flex items-center border-t-4 border-purple-500">
+                <div class="p-3 bg-purple-500/20 rounded-lg text-purple-400 text-2xl">🧠</div>
+                <div class="ml-4">
+                    <p class="text-slate-400 text-sm">งานโปรเจกต์ (สารตั้งต้น)</p>
+                    <h3 class="text-2xl font-bold text-white">3 <span class="text-lg text-slate-500 font-normal">รายการ</span></h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Section: Chart & Workflow -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="glass-card p-6 lg:col-span-1">
+                <h2 class="text-lg font-semibold text-white mb-4">สัดส่วนบทบาทของ AI (AI Roles)</h2>
+                <div class="h-64 relative">
+                    <canvas id="aiRoleChart"></canvas>
+                </div>
+            </div>
+            <div class="glass-card p-6 lg:col-span-2">
+                <h2 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    เทคนิคการทำงานแบบคู่ขนาน (Multitasking Workflow)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                        <h3 class="font-bold text-blue-400 mb-2">1. Split Screen (เปิดจอคู่)</h3>
+                        <p class="text-slate-300 text-sm">หน้าจอซ้ายเปิดโปรแกรมทำงานหลัก (เช่น VS Code, Word) หน้าจอขวาเปิดหน้าต่าง AI (ChatGPT/Gemini) ทิ้งไว้เสมอเพื่อคอยถาม-ตอบทันที</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                        <h3 class="font-bold text-amber-400 mb-2">2. Fire and Forget (สั่งแล้วไปทำอย่างอื่น)</h3>
+                        <p class="text-slate-300 text-sm">ก่อนลุกไปทำธุระ (เช่น ไปดูระบบน้ำหมัก) ให้ก๊อปปี้ Prompt งานเขียนยาวๆ โยนให้ AI ทิ้งไว้ พอกลับมาที่โต๊ะ คุณจะได้ Draft พร้อมใช้งานทันที</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prompt Matrix Section -->
+        <div class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">📋 คลังคำสั่ง AI (Prompt Matrix)</h2>
+
+            <!-- Priority 1 -->
+            <div class="glass-card p-0 overflow-hidden border-l-4 border-l-rose-500">
+                <div class="bg-rose-500/10 p-4 border-b border-slate-700 flex justify-between items-center">
+                    <h3 class="font-bold text-rose-400 text-lg">🔴 ลำดับที่ 1: งานด่วนที่สุด (สั่ง AI วันนี้ เพื่อใช้งานทันที)</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Task 1.1 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white">1.1 ระบบแก้จน ppaos.com</h4>
+                            <span class="bg-slate-700 text-xs px-2 py-1 rounded text-blue-300">Coding Assistant</span>
+                        </div>
+                        <p class="text-sm text-slate-400">เป้าหมาย: ช่วยเขียนคำสั่ง SQL สำหรับ Clean Data และโค้ด Backend</p>
+                        <div class="prompt-box p-4 rounded-lg relative group">
+                            <p class="text-sm text-slate-300 font-mono leading-relaxed" id="prompt1">ฉันทำระบบเว็บด้วย [ระบุภาษา เช่น PHP + MySQL] โครงสร้างตารางชื่อ `users` มีคอลัมน์ `province`. ช่วยเขียน SQL Query สำหรับลบข้อมูลที่ซ้ำซ้อนของ 'อำนาจเจริญ' และเขียนฟังก์ชัน API สำหรับผูกกับปุ่ม 'เคลียร์ดาต้า' ให้หน่อย</p>
+                            <button onclick="copyPrompt('prompt1')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                    <!-- Task 1.2 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white">1.2 สอนพิเศษ กส.พิทย์</h4>
+                            <span class="bg-slate-700 text-xs px-2 py-1 rounded text-purple-300">Teaching Assistant</span>
+                        </div>
+                        <p class="text-sm text-slate-400">เป้าหมาย: ร่างหัวข้อสไลด์ และสร้างโจทย์แบบฝึกหัด/ควิซ</p>
+                        <div class="prompt-box p-4 rounded-lg relative group">
+                            <p class="text-sm text-slate-300 font-mono leading-relaxed" id="prompt2">พรุ่งนี้ฉันต้องไปสอนพิเศษเด็ก ม.ปลาย หัวข้อ [ระบุวิชา/เนื้อหา] เป็นเวลา 2 วัน ช่วยร่างโครงสร้างสไลด์การสอนแบบแบ่งเนื้อหาตามวันให้หน่อย และขอโจทย์ทดสอบความเข้าใจ 5 ข้อ พร้อมเฉลย</p>
+                            <button onclick="copyPrompt('prompt2')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority 2 -->
+            <div class="glass-card p-0 overflow-hidden border-l-4 border-l-amber-500">
+                <div class="bg-amber-500/10 p-4 border-b border-slate-700">
+                    <h3 class="font-bold text-amber-400 text-lg">🟠 ลำดับที่ 2: งานระยะสั้น (สั่ง AI จันทร์-อังคาร 20-21 ก.ค.)</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Task 2.1 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white text-sm">2.1 เตรียมสอน Embedded</h4>
+                            <span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-emerald-300">Content Gen.</span>
+                        </div>
+                        <div class="prompt-box p-3 rounded-lg relative group h-full">
+                            <p class="text-xs text-slate-300 font-mono leading-relaxed" id="prompt3">ช่วยออกแบบใบงาน (Lab Sheet) สำหรับสอนวิชา Embedded System ระดับมหาวิทยาลัย หัวข้อ [การอ่านค่าเซ็นเซอร์] ใช้บอร์ด ESP32 ช่วยเขียนตัวอย่างโค้ด C++ พร้อมคอมเมนต์อธิบายแต่ละบรรทัดให้ด้วย</p>
+                            <button onclick="copyPrompt('prompt3')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                    <!-- Task 2.2 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white text-sm">2.2 วิทยากร รร.ทุ่งกุลา</h4>
+                            <span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-pink-300">Copywriter</span>
+                        </div>
+                        <div class="prompt-box p-3 rounded-lg relative group h-full">
+                            <p class="text-xs text-slate-300 font-mono leading-relaxed" id="prompt4">ช่วยร่างวาระการประชุมสั้นๆ เพื่อเตรียมคุยกับทีมงานเรื่องการจัดค่ายวิชาการ รร.ทุ่งกุลา และช่วยร่างโครงสร้างจดหมายเชิญวิทยากร (หนังสือครุฑ) เพื่อส่งให้โรงเรียนเป็นตัวอย่าง</p>
+                            <button onclick="copyPrompt('prompt4')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                    <!-- Task 2.3 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white text-sm">2.3 วิทยากร จ.ร้อยเอ็ด</h4>
+                            <span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-cyan-300">Communicator</span>
+                        </div>
+                        <div class="prompt-box p-3 rounded-lg relative group h-full">
+                            <p class="text-xs text-slate-300 font-mono leading-relaxed" id="prompt5">ช่วยร่างข้อความทาง LINE แบบเป็นทางการแต่มีความเป็นกันเอง เพื่อเชิญอาจารย์ 3 ท่านมาเป็นวิทยากรที่ร้อยเอ็ด และขอนัดเวลาโทรคุยรายละเอียดในวันที่ 24 ก.ค. นี้</p>
+                            <button onclick="copyPrompt('prompt5')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority 3 -->
+            <div class="glass-card p-0 overflow-hidden border-l-4 border-l-yellow-400">
+                <div class="bg-yellow-400/10 p-4 border-b border-slate-700">
+                    <h3 class="font-bold text-yellow-400 text-lg">🟡 ลำดับที่ 3: งานโปรเจกต์/วิชาการ (ทยอยสั่ง AI พุธ-ศุกร์)</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                     <!-- Task 3.1 -->
+                     <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white text-sm">3.1 ข้อเสนอ AI (4 ล้าน)</h4>
+                            <span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-orange-300">Grant Writer</span>
+                        </div>
+                        <div class="prompt-box p-3 rounded-lg relative group h-full">
+                            <p class="text-xs text-slate-300 font-mono leading-relaxed" id="prompt6">ฉันกำลังร่างโครงการขอทุน 4 ล้านบาท หัวข้อ 'การใช้ AI พัฒนาการศึกษา'. ช่วยเขียน 'หลักการและเหตุผล' ความยาว 3 ย่อหน้า ด้วยภาษาทางการราชการ และช่วยลิสต์หัวข้อเทคโนโลยี AI ที่ควรใส่</p>
+                            <button onclick="copyPrompt('prompt6')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                    <!-- Task 3.2 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white text-sm">3.2 วิจัย TCI 1</h4>
+                            <span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-indigo-300">Research Asst.</span>
+                        </div>
+                        <div class="prompt-box p-3 rounded-lg relative group h-full">
+                            <p class="text-xs text-slate-300 font-mono leading-relaxed" id="prompt7">นี่คือบทคัดย่อ (Abstract) ที่ฉันเขียน [วางเนื้อหา] ช่วยปรับแก้แกรมม่าให้เป็นภาษาอังกฤษระดับ Academic และทำให้กระชับขึ้น. หรือ ช่วยสรุปเปเปอร์นี้เป็น Bullet Points [วาง text ของเปเปอร์]</p>
+                            <button onclick="copyPrompt('prompt7')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                    <!-- Task 3.3 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white text-sm">3.3 QA (SAR/CAR)</h4>
+                            <span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-teal-300">QA Editor</span>
+                        </div>
+                        <div class="prompt-box p-3 rounded-lg relative group h-full">
+                            <p class="text-xs text-slate-300 font-mono leading-relaxed" id="prompt8">มีคอมเมนต์จากการประเมิน QA ดังนี้: [วางคอมเมนต์] ช่วยเขียนสรุปแนวทางแก้ไขปรับปรุง (CAR) เป็นข้อๆ ด้วยภาษาที่เป็นทางการและดูเป็นรูปธรรมให้หน่อย</p>
+                            <button onclick="copyPrompt('prompt8')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-[10px] px-2 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority 4 -->
+            <div class="glass-card p-0 overflow-hidden border-l-4 border-l-emerald-500">
+                <div class="bg-emerald-500/10 p-4 border-b border-slate-700">
+                    <h3 class="font-bold text-emerald-400 text-lg">🟢 ลำดับที่ 4: งานอื่นๆ (สั่ง AI เมื่อมีเวลาว่าง)</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Task 4.1 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white">4.1 จัดซื้อวัสดุ/TOR</h4>
+                            <span class="bg-slate-700 text-xs px-2 py-1 rounded text-stone-300">Procurement</span>
+                        </div>
+                        <div class="prompt-box p-4 rounded-lg relative group">
+                            <p class="text-sm text-slate-300 font-mono leading-relaxed" id="prompt9">ช่วยร่างรายละเอียดคุณลักษณะเฉพาะ (TOR) สำหรับการจัดซื้อคอมพิวเตอร์ จำนวน 10 เครื่อง งบเครื่องละไม่เกิน 30,000 บาท สำหรับใช้ในห้องปฏิบัติการคอมพิวเตอร์ของสาขา</p>
+                            <button onclick="copyPrompt('prompt9')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                    <!-- Task 4.2 -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-semibold text-white">4.2 กติกาแข่ง e-Sport</h4>
+                            <span class="bg-slate-700 text-xs px-2 py-1 rounded text-fuchsia-300">Event Planner</span>
+                        </div>
+                        <div class="prompt-box p-4 rounded-lg relative group">
+                            <p class="text-sm text-slate-300 font-mono leading-relaxed" id="prompt10">ช่วยร่างกฎกติกาการแข่งขัน E-Sport เกม RoV แบบทัวร์นาเมนต์ออนไลน์ และร่างแคปชั่น Facebook สำหรับเปิดรับสมัครนักศึกษาเข้าร่วมแข่งขัน พร้อมระบุช่องทางติดต่อ</p>
+                            <button onclick="copyPrompt('prompt10')" class="absolute top-2 right-2 bg-slate-700 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition opacity-0 group-hover:opacity-100 focus:opacity-100">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="text-center text-slate-500 text-sm mt-8 border-t border-slate-700 pt-6 pb-4">
+            Designed for high-productivity workflow &copy; 2026. Hosted on GitHub Pages.
+        </footer>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">✅ คัดลอก Prompt แล้ว! นำไปวางได้เลย</div>
+
+    <script>
+        // --- Copy to Clipboard Function ---
+        function copyPrompt(elementId) {
+            const copyText = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(copyText).then(() => {
+                // Show toast notification
+                const toast = document.getElementById("toast");
+                toast.className = "toast show";
+                setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert("ไม่สามารถคัดลอกข้อความได้");
+            });
+        }
+
+        // --- Chart.js Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('aiRoleChart').getContext('2d');
+            
+            // Setting default colors for dark mode text
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = "'Sarabun', sans-serif";
+
+            new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: [
+                        'งานร่างเอกสาร/วิชาการ', 
+                        'งานเขียนโค้ด (Coding)', 
+                        'งานประสานงาน/ติดต่อ', 
+                        'งานวางแผน (Planning)'
+                    ],
+                    datasets: [{
+                        label: 'ภาระงาน',
+                        data: [4, 2, 2, 2], // Distribution based on the 10 prompt tasks
+                        backgroundColor: [
+                            'rgba(167, 139, 250, 0.7)', // Purple (Writing)
+                            'rgba(96, 165, 250, 0.7)',  // Blue (Coding)
+                            'rgba(52, 211, 153, 0.7)',  // Emerald (Comm)
+                            'rgba(251, 191, 36, 0.7)'   // Amber (Planning)
+                        ],
+                        borderColor: '#1e293b',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            ticks: {
+                                display: false, // hide numbers
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
